@@ -1,0 +1,25 @@
+{
+    "name": "xuan/bulk-upload-users-app",
+    "description": "This project allows to upload multiple users from the .csv file to database.",
+    "type": "project",
+    "authors": [
+        {
+            "name": "xuan Gui",
+            "email": "xuan.gui@outlook.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "Src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\": "Tests"
+        }
+    }
+}
