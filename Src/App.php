@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App;
 
+use App\Helpers\FileHelper;
+use App\Controllers\UsersController;
 
 class App {
 
@@ -14,6 +16,8 @@ class App {
     private $createTable = true;
     private $dryRun = false;
     private $printHelp = false;
+    private $fileContent;
+    private $errorMessages = [];
 
     /**
      * App constructor.
@@ -69,4 +73,13 @@ database won\'t be altered';
         }
     }
 
+    /**
+     * Read file
+     *
+     */
+    public function readFile()
+    {
+        $this->fileContent = FileHelper::getFileContent($this->fileName);
+        print_r($this->fileContent);
+    }
 }
