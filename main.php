@@ -3,8 +3,7 @@
 declare(strict_types = 1);
 
 require_once __DIR__ . '/vendor/autoload.php';
-
-set_exception_handler([new \App\Exceptions\ExceptionHandler(), 'handle']);
+require_once __DIR__ . '/Src/Exceptions/exception.php';
 
 use App\Helpers\CommandLineArgumentHelper;
 use App\App;
