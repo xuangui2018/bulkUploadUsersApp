@@ -40,4 +40,25 @@ class User {
         return $this->email;
     }
 
+    public function save()
+    {
+        $sql = sprintf(
+            "INSERT INTO users (name, surname, email) VALUES ('%s', '%s', '%s')",
+            $this->name,
+            $this->surname,
+            $this->email
+        );
+        print $sql. PHP_EOL;
+    }
+
+    public function dryRun()
+    {
+        $sql = sprintf(
+            "INSERT INTO users (name, surname, email) VALUES ('%s', '%s', '%s')",
+            $this->name,
+            $this->surname,
+            $this->email
+        );
+        print $sql. PHP_EOL;
+    }
 }
