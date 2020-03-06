@@ -76,10 +76,48 @@ database won\'t be altered';
     /**
      * Read file
      *
+     * @return $this
+     * @throws Exceptions\FileNotFoundException
      */
     public function readFile()
     {
         $this->fileContent = FileHelper::getFileContent($this->fileName);
-        print_r($this->fileContent);
+        return $this;
+    }
+
+    /**
+     * Process file
+     *
+     * @return void
+     */
+    public function processFile(): void
+    {
+        foreach ($this->fileContent as $lineNumber=>$userDetails) {
+            if (trim($userDetails[0]) === 'name' || trim($userDetails[1]) === 'surname' || trim($userDetails[2]) === 'email') {
+                continue;
+            }
+            $usersController = new UsersController();
+            $errorMessage = $usersController->store($userDetails, $this->dryRun);
+            if (!empty($errorMessage)) {
+                $this->errorMessages[$lineNumber+1] = $errorMessage;
+            }
+        }
+        $this->printErrorMessages();
+    }
+
+    /**
+     * Print out error messages
+     *
+     * @return void
+     */
+    private function printErrorMessages(): void
+    {
+        if (count($this->errorMessages) > 0) {
+            foreach ($this->errorMessages as $lineNumber=>$errorMessage) {
+                foreach ($errorMessage as $error) {
+                    print "Line $lineNumber: $error". PHP_EOL;
+                }
+            }
+        }
     }
 }
