@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Helpers;
 
+use App\Exceptions\FileNotFoundException;
+
 class FileHelper {
 
     /**
@@ -11,6 +13,7 @@ class FileHelper {
      *
      * @param string $fileName
      * @return array
+     * @throws FileNotFoundException
      */
     public static function getFileContent(string $fileName): array
     {
@@ -18,7 +21,9 @@ class FileHelper {
         $filePath = dirname(dirname(__DIR__)) . '/' . $fileName;
         if (file_exists($filePath)) {
             $fileContent = array_map('str_getcsv', file($filePath));
-            return $fileContent;
+        } else {
+            throw new FileNotFoundException(sprintf('The specified file: %s was not found', $fileName));
         }
+        return $fileContent;
     }
 }
