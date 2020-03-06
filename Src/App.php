@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App;
 
+use App\Database\Database;
+use App\Exceptions\DatabaseConnectionException;
 use App\Helpers\FileHelper;
 use App\Controllers\UsersController;
 
@@ -13,7 +15,7 @@ class App {
     private $databaseHost;
     private $databaseUsername;
     private $databasePassword;
-    private $createTable = true;
+    private $createTable = false;
     private $dryRun = false;
     private $printHelp = false;
     private $fileContent;
@@ -34,7 +36,6 @@ class App {
         }
         if (isset($arguments['dry_run'])) {
             $this->dryRun = true;
-            $this->createTable = false;
         }
         if (isset($arguments['help'])) {
             $this->printHelp = true;
@@ -71,6 +72,53 @@ database won\'t be altered';
                 print $helpCommand . PHP_EOL;
             }
         }
+    }
+
+    /**
+     * Get createTable
+     *
+     * @return bool
+     */
+    public function getCreateTable(): bool
+    {
+        return $this->createTable;
+    }
+
+    /**
+     * Create users table
+     */
+    public function createTable(): void
+    {
+        $query = "
+            CREATE DATABASE bulkUploadUsersApp;
+            use bulkUploadUsersApp;
+            CREATE TABLE users (
+                id INT(64) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                surname VARCHAR(100) NOT NULL,
+                email VARCHAR(200) NOT NULL,
+                UNIQUE INDEX (email)
+            );";
+        try {
+            $database = new Database();
+            $databaseConnection = $database->getConnection();
+            $stmt = $databaseConnection->prepare($query);
+            if ($stmt->execute()) {
+                print "Users table has been created successfully";
+            }
+        } catch (Throwable $e) {
+            throw new DatabaseConnectionException('Could not create users table.');
+        }
+    }
+
+    /**
+     * Get dry run
+     *
+     * @return bool
+     */
+    public function getDryRun(): bool
+    {
+        return $this->dryRun;
     }
 
     /**

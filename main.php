@@ -14,6 +14,10 @@ $arguments = CommandLineArgumentHelper::formatArgumentArray($argv);
 $app = new App($arguments);
 if ($app->getPrintHelp()) {
     $app->printOutHelpCommands();
+} elseif ($app->getCreateTable()) {
+    $app->createTable();
+} elseif ($app->getDryRun()) {
+    $app->readFile()->processFile();
 } else {
     $app->readFile()->processFile();
 }
