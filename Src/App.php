@@ -11,10 +11,12 @@ use App\Controllers\UsersController;
 
 class App {
 
-    private $fileName;
-    private $databaseHost;
-    private $databaseUsername;
-    private $databasePassword;
+    const DATABASENAMWE = 'bulkUploadUsersApp';
+
+    private $fileName = '';
+    private $databaseHost = '';
+    private $databaseUsername = '';
+    private $databasePassword = '';
     private $createTable = false;
     private $dryRun = false;
     private $printHelp = false;
@@ -27,10 +29,18 @@ class App {
      */
     public function __construct(array $arguments)
     {
-        $this->fileName = $arguments['file'];
-        $this->databaseHost = $arguments['h'];
-        $this->databaseUsername = $arguments['u'];
-        $this->databasePassword = $arguments['p'];
+        if (isset($arguments['file'])) {
+            $this->fileName = $arguments['file'];
+        }
+        if (isset($arguments['h'])) {
+            $this->databaseHost = $arguments['h'];
+        }
+        if (isset($arguments['u'])) {
+            $this->databaseUsername = $arguments['u'];
+        }
+        if (isset($arguments['p'])) {
+            $this->databasePassword = $arguments['p'];
+        }
         if (isset($arguments['create_table'])) {
             $this->createTable = true;
         }
@@ -100,7 +110,7 @@ database won\'t be altered';
                 UNIQUE INDEX (email)
             );";
         try {
-            $database = new Database();
+            $database = new Database($this->databaseHost, $this->databaseUsername, $this->databasePassword);
             $databaseConnection = $database->getConnection();
             $stmt = $databaseConnection->prepare($query);
             if ($stmt->execute()) {
@@ -140,12 +150,19 @@ database won\'t be altered';
      */
     public function processFile(): void
     {
+        try {
+            $database = new Database($this->databaseHost, $this->databaseUsername, $this->databasePassword, App::DATABASENAMWE);
+            $databaseConnection = $database->getConnection();
+        } catch (Throwable $e) {
+            throw new DatabaseConnectionException('Unable to connect to database.');
+        }
+
         foreach ($this->fileContent as $lineNumber=>$userDetails) {
             if (trim($userDetails[0]) === 'name' || trim($userDetails[1]) === 'surname' || trim($userDetails[2]) === 'email') {
                 continue;
             }
             $usersController = new UsersController();
-            $errorMessage = $usersController->store($userDetails, $this->dryRun);
+            $errorMessage = $usersController->store($userDetails, $this->dryRun, $databaseConnection);
 
             if (is_array($errorMessage)) {
                 $this->errorMessages[$lineNumber+1] = $errorMessage;

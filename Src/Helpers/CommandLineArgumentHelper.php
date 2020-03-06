@@ -20,7 +20,7 @@ class CommandLineArgumentHelper
                 $key = $matches[1];
                 switch ($matches[2]) {
                     case '':
-                        $value = true;
+                        $value = '';
                         break;
                     default:
                         $value = $matches[2];

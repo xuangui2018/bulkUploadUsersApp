@@ -11,61 +11,106 @@ use Throwable;
 
 class User {
 
+    /**
+     * @var $name
+     */
     private $name;
+
+    /**
+     * @var $surname
+     */
     private $surname;
+
+    /**
+     * @var $email
+     */
     private $email;
 
+    /**
+     * Set name
+     *
+     * @param string $name
+     */
     public function setName(string $name) {
 
         $this->name = HumanNameFormatHelper::format($name);
     }
 
+    /**
+     * Set surname
+     *
+     * @param string $surname
+     */
     public function setSurname(string $surname) {
         $this->surname =  HumanNameFormatHelper::format($surname);
     }
 
+    /**
+     * Set email
+     *
+     * @param string $email
+     */
     public function setEmail(string $email) {
         $this->email = trim($email);
     }
 
+    /**
+     * Get name
+     *
+     * @return mixed
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * Get surname
+     *
+     * @return mixed
+     */
     public function getSurname()
     {
         return $this->surname;
     }
 
+    /**
+     * Get email
+     *
+     * @return mixed
+     */
     public function getEmail()
     {
         return $this->email;
     }
 
-    public function save()
+    /**
+     * Save user
+     *
+     * @param $databaseConnection
+     * @return string
+     */
+    public function save($databaseConnection): string
     {
         $query = "INSERT INTO users (name, surname, email) VALUES (?, ?, ?);";
+        $stmt = $databaseConnection->prepare($query);
+        $stmt->bindParam(1, $this->name);
+        $stmt->bindParam(2, $this->surname);
+        $stmt->bindParam(3, $this->email);
 
-        try {
-            $database = new Database();
-            $databaseConnection = $database->getConnection();
-            $stmt = $databaseConnection->prepare($query);
-            $stmt->bindParam(1, $this->name);
-            $stmt->bindParam(2, $this->surname);
-            $stmt->bindParam(3, $this->email);
-
-            if ($stmt->execute()) {
-                return "Unable to add user." . PHP_EOL;
-            } else {
-                return "User added successfully." . PHP_EOL;
-            }
-        } catch (Throwable $e) {
-            throw new DatabaseConnectionException('Unable to connect to database.');
+        if ($stmt->execute()) {
+            return "Unable to add user." . PHP_EOL;
+        } else {
+            return "User added successfully." . PHP_EOL;
         }
     }
 
-    public function dryRun()
+    /**
+     * Dry run - only print out queries
+     *
+     * @return void
+     */
+    public function dryRun(): void
     {
         $query = sprintf(
             "INSERT INTO users (name, surname, email) VALUES ('%s', '%s', '%s')",

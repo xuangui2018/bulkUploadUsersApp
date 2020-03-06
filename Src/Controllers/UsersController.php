@@ -14,9 +14,10 @@ class UsersController
      *
      * @param array $userDetails
      * @param bool $dryRun
-     * @return array
+     * @param $databaseConnection
+     * @return array/string
      */
-    public function store(array $userDetails, bool $dryRun)
+    public function store(array $userDetails, bool $dryRun, $databaseConnection)
     {
         $user = new User;
         $user->setName($userDetails[0]);
@@ -30,7 +31,7 @@ class UsersController
             if ($dryRun) {
                 $user->dryRun();
             } else {
-                return $user->save();
+                return $user->save($databaseConnection);
             }
         }
     }
