@@ -30,7 +30,7 @@ class UsersController
             if ($dryRun) {
                 $user->dryRun();
             } else {
-                $user->save();
+                return $user->save();
             }
         }
     }

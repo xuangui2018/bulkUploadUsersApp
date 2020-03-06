@@ -5,6 +5,9 @@ declare(strict_types = 1);
 namespace App\Models;
 
 use App\Helpers\HumanNameFormatHelper;
+use App\Database\Database;
+use App\Exceptions\DatabaseConnectionException;
+use Throwable;
 
 class User {
 
@@ -42,23 +45,34 @@ class User {
 
     public function save()
     {
-        $sql = sprintf(
-            "INSERT INTO users (name, surname, email) VALUES ('%s', '%s', '%s')",
-            $this->name,
-            $this->surname,
-            $this->email
-        );
-        print $sql. PHP_EOL;
+        $query = "INSERT INTO users (name, surname, email) VALUES (?, ?, ?);";
+
+        try {
+            $database = new Database();
+            $databaseConnection = $database->getConnection();
+            $stmt = $databaseConnection->prepare($query);
+            $stmt->bindParam(1, $this->name);
+            $stmt->bindParam(2, $this->surname);
+            $stmt->bindParam(3, $this->email);
+
+            if ($stmt->execute()) {
+                return "Unable to add user." . PHP_EOL;
+            } else {
+                return "User added successfully." . PHP_EOL;
+            }
+        } catch (Throwable $e) {
+            throw new DatabaseConnectionException('Unable to connect to database.');
+        }
     }
 
     public function dryRun()
     {
-        $sql = sprintf(
+        $query = sprintf(
             "INSERT INTO users (name, surname, email) VALUES ('%s', '%s', '%s')",
-            $this->name,
-            $this->surname,
+            addslashes($this->name),
+            addslashes($this->surname),
             $this->email
         );
-        print $sql. PHP_EOL;
+        print $query . PHP_EOL;
     }
 }

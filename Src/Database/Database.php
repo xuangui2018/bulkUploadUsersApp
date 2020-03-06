@@ -7,16 +7,22 @@ use PDO;
 use Throwable;
 
 class Database {
-    private $dbHost = 'localhost';
+    private $dbHost = 'localhost1';
     private $dbName = 'bulkUploadUsersApp';
     private $dbUsername = 'root';
     private $dbPassword = '';
     private $connection;
 
-    public function __construct($dbHost = '', $dbName = '', $dbPassword = '') {
-        $this->dbHost = $dbHost;
-        $this->dbName = $dbName;
-        $this->dbPassword = $dbPassword;
+    public function __construct($dbHost = '', $dbUsername = '', $dbPassword = '') {
+        if ($dbHost) {
+            $this->dbHost = $dbHost;
+        }
+        if ($dbUsername) {
+            $this->dbUsername = $dbUsername;
+        }
+        if ($dbPassword) {
+            $this->dbPassword = $dbPassword;
+        }
     }
 
     public function getConnection() {

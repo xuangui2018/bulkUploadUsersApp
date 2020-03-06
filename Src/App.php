@@ -146,8 +146,13 @@ database won\'t be altered';
             }
             $usersController = new UsersController();
             $errorMessage = $usersController->store($userDetails, $this->dryRun);
-            if (!empty($errorMessage)) {
+
+            if (is_array($errorMessage)) {
                 $this->errorMessages[$lineNumber+1] = $errorMessage;
+            } else {
+                if (!$this->dryRun) {
+                    $this->errorMessages[$lineNumber + 1][] = $errorMessage;
+                }
             }
         }
         $this->printErrorMessages();
