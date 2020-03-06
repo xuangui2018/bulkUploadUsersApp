@@ -11,7 +11,7 @@ php user_upload.php -h=localhost -u=root -p --create_table
 OR
 php user_upload.php --create_table
 
-To run the script and print out a Insert statements and errors if there is any:
+To run the script and print out a Insert statements and validation errors if there is any:
 php user_upload.php --file=users.csv --dry_run
 
 To run the script and insert all the users into users table and print out errors if there is any:
