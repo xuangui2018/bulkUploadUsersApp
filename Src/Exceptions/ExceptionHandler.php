@@ -20,7 +20,8 @@ class ExceptionHandler
      */
     public function handle(Throwable $exception): void
     {
-        var_dump($exception);
+        //var_dump($exception);
+        print $exception->getMessage();
         exit;
     }
 
